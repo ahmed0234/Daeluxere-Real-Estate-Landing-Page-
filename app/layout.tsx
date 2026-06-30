@@ -21,7 +21,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Daeluxe Real Estate — Luxury Advisors in Denver, Colorado",
+  title: "Daeluxe Real Estate Luxury Advisors in Denver, Colorado",
   description:
     "Denver's trusted luxury real estate advisors. Helping buyers, sellers, and investors find their perfect home across Denver, Aurora, and Boulder, Colorado.",
 };
