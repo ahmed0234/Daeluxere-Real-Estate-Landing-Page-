@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9f9f9; /* Soft Ivory */
+  --foreground: #222222; /* Deep Charcoal */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Custom Palette */
+  --color-soft-ivory: #f9f9f9;
+  --color-hard-ivory: #fafafa;
+  --color-deep-charcoal: #282828;
+  --color-woody-brown: #a17c5f;
+  --color-champagne-gold: #e5b80b;
+  --color-olive-shadow: #626456;
+  --color-warm-ochre: #c39d72;
+
+  /* Semantic Colors */
+  --color-primary: var(--color-champagne-gold);
+  --color-secondary: var(--color-olive-shadow);
+  --color-accent: var(--color-warm-ochre);
+  --color-neutral: var(--color-woody-brown);
+
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-playfair: var(--font-playfair);
+
+  /* Animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 4s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Keyframes ─────────────────────────────────────── */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
   }
 }
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(221, 199, 161, 0);
+  }
+  50% {
+    box-shadow: 0 0 32px 4px rgba(221, 199, 161, 0.18);
+  }
+}
+
+@keyframes progress-fill {
+  from {
+    width: 0%;
+  }
+}
+
+/* ── Base ──────────────────────────────────────────── */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-sans;
+}
+
+/* ── Utility: font-playfair ────────────────────────── */
+.font-playfair {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* ── Glassmorphism base ────────────────────────────── */
+.glass {
+  background: rgba(34, 26, 20, 0.52);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(221, 199, 161, 0.18);
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddc7a1;
+  border-radius: 3px;
 }
