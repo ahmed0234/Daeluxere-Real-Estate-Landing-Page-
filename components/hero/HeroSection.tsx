@@ -66,6 +66,13 @@ const STATS = [
   },
 ];
 
+const HERO_TEAM = [
+  { name: "Dae Han Trejo", src: "/Team/CEO.avif" },
+  { name: "Vanessa Sanchez", src: "/Team/VanessaSanchez.avif" },
+  { name: "Kyle Rupert", src: "/Team/KyleRupert.avif" },
+  { name: "Mikaela Paclar", src: "/Team/MikaelaPaclar.avif" },
+];
+
 /* Border classes for 3-col grid */
 const STAT_BORDERS = [
   "border-r border-white/[0.09]",
@@ -284,7 +291,7 @@ export default function HeroSection() {
             {/* CTA row */}
             <motion.div
               {...fadeUp(0.86)}
-              className="flex flex-wrap items-center gap-5 mb-14"
+              className="flex flex-wrap items-center gap-6 sm:gap-8 mb-12"
             >
               {/* Primary CTA — frosted glass */}
               <motion.a
@@ -313,6 +320,66 @@ export default function HeroSection() {
                 Book a Free Consultation
                 <RiArrowRightLine className="text-base text-white" />
               </motion.a>
+
+              {/* Secondary decorative element next to CTA button */}
+              <motion.a
+                href="#success-stories"
+                whileHover={{ x: 4 }}
+                className="inline-flex items-center gap-2 text-white/70 hover:text-white text-[13px] font-bold tracking-[0.14em] uppercase transition-colors group cursor-pointer"
+              >
+                <span>Success Stories</span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-colors group-hover:border-champagne-gold group-hover:bg-champagne-gold/15">
+                  <RiArrowRightLine className="text-xs text-champagne-gold transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </motion.a>
+            </motion.div>
+
+            {/* ── Meet Our Team Widget (Bottom highlighted area) ── */}
+            <motion.div
+              {...fadeUp(0.95)}
+              className="mt-6 flex flex-wrap items-center gap-5 border border-white/5 bg-black/10 backdrop-blur-md rounded-2xl p-4 max-w-sm"
+            >
+              {/* Overlapping Avatar Stack */}
+              <div className="flex -space-x-3.5 hover:-space-x-2 transition-all duration-300 ease-out cursor-pointer py-1">
+                {HERO_TEAM.map((member) => (
+                  <motion.div
+                    key={member.name}
+                    className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#120f0d] shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+                    whileHover={{ 
+                      y: -4, 
+                      scale: 1.1, 
+                      zIndex: 10,
+                      boxShadow: "0 8px 16px rgba(221,199,161,0.25)"
+                    }}
+                    transition={{ type: "spring", stiffness: 350, damping: 15 }}
+                  >
+                    <Image
+                      src={member.src}
+                      alt={member.name}
+                      fill
+                      sizes="40px"
+                      className="object-cover object-top"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Text info */}
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <span className="text-[9px] font-bold tracking-[0.18em] uppercase text-champagne-gold/90">
+                  Our Experts
+                </span>
+                <a
+                  href="#team"
+                  className="group flex items-center gap-1 text-white hover:text-champagne-gold font-bold text-sm tracking-wide transition-colors"
+                >
+                  Meet Our Team
+                  <RiArrowRightLine className="text-xs text-champagne-gold transition-transform group-hover:translate-x-0.5" />
+                </a>
+                <span className="text-white/45 text-[10px] sm:text-[11px] leading-tight truncate">
+                  Direct access to local luxury leaders
+                </span>
+              </div>
             </motion.div>
           </div>
 

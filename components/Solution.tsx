@@ -75,7 +75,7 @@ const STATS: Stat[] = [
 ];
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1564078516393-cf04bd966897?q=80&w=1600&auto=format&fit=crop";
+  "/SolutionImage.webp";
 
 /* ------------------------------------------------------------------ */
 /*  Motion variants                                                    */

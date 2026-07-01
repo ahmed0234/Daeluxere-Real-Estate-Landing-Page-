@@ -120,7 +120,7 @@ export default function PainPointsSection() {
         >
           {/* background image */}
           <img
-            src="https://picsum.photos/seed/seller-estate-dusk/1100/1400"
+            src="/PainProblem/PainProblemLeft.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover"
@@ -213,7 +213,7 @@ export default function PainPointsSection() {
         >
           {/* background image */}
           <img
-            src="https://picsum.photos/seed/buyer-interior-night/1100/1400"
+            src="/PainProblem/PainProblemRight.webp"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover opacity-90"

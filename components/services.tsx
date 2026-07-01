@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, type Variants } from "motion/react";
 import {
   Home,
@@ -68,8 +69,7 @@ const SERVICES: Service[] = [
       "Strategic Marketing",
       "Maximum Exposure",
     ],
-    image:
-      "https://images.unsplash.com/photo-1757416654883-c73c67b3382b?auto=format&fit=crop&w=900&q=80",
+    image: "/Services/SellYourProperty.webp",
   },
   {
     number: "03",
@@ -82,8 +82,7 @@ const SERVICES: Service[] = [
       "Cinematic Videography",
       "Eye-Catching Listing Design",
     ],
-    image:
-      "https://images.unsplash.com/photo-1760067537565-1d4cbb8da0c3?auto=format&fit=crop&w=900&q=80",
+    image: "/Services/HighQualityRealEstateMarketing.webp",
   },
   {
     number: "04",
@@ -96,8 +95,7 @@ const SERVICES: Service[] = [
       "Platform-Specific Campaigns",
       "Audience Growth & Engagement",
     ],
-    image:
-      "https://images.unsplash.com/photo-1724862936518-ae7fcfc052c1?auto=format&fit=crop&w=900&q=80",
+    image: "/Services/SocialMediaMarketing.webp",
   },
 ];
 
@@ -222,10 +220,12 @@ function ServiceCard({
     >
       {/* Image */}
       <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <img
+        <Image
           src={image}
           alt={title}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
 
@@ -306,11 +306,13 @@ function WhyChooseBanner() {
       </div>
 
       {/* Middle — image */}
-      <div className="relative min-h-[260px] overflow-hidden lg:min-h-0">
-        <img
+      <div className="relative min-h-[260px] overflow-hidden lg:min-h-0 lg:h-full">
+        <Image
           src={BANNER_IMAGE}
           alt="Luxury living room with panoramic city view"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          fill
+          sizes="(max-width: 1024px) 100vw, 33vw"
+          className="object-cover transition-transform duration-[1200ms] ease-out hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
         />
       </div>
 

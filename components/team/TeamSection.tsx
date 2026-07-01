@@ -112,7 +112,7 @@ function MagneticButton({ children, href = "#" }) {
 
 export default function TeamSection() {
   return (
-    <section className="relative w-full bg-soft-ivory font-sans px-6 py-20 sm:px-10 lg:px-16 xl:px-20 2xl:px-28">
+    <section id="team" className="relative w-full bg-soft-ivory font-sans px-6 py-20 sm:px-10 lg:px-16 xl:px-20 2xl:px-28">
       <div className="w-full">
         {/* ---------------------------------------------------------- */}
         {/* Header row                                                  */}
