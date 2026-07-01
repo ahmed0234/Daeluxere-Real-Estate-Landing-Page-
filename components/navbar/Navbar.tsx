@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { RiArrowRightUpLine } from "react-icons/ri";
+import { RiPhoneLine } from "react-icons/ri";
 
-/* ── Data ─────────────────────────────────────────────── */
-
-const NAV_LINKS = [
-  { label: "Buy", href: "#buy" },
-  { label: "Sell", href: "#buy" },
-  { label: "Rent", href: "#rent" },
-  { label: "About", href: "#about" },
-];
+const PHONE = "tel:+17209168926";
+const PHONE_DISPLAY = "(720) 916-8926";
 
 /* ── Motion variants ─────────────────────────────────── */
 
@@ -29,30 +23,21 @@ const navbarVariant = {
   },
 };
 
-const linkContainerVariant = {
-  animate: {
-    transition: {
-      staggerChildren: 0.07,
-      delayChildren: 0.38,
-    },
-  },
-};
-
-const linkVariant = {
-  initial: { opacity: 0, y: -6 },
+const logoVariant = {
+  initial: { opacity: 0, x: -8 },
   animate: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    x: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.18 },
   },
 };
 
 const buttonVariant = {
-  initial: { opacity: 0, y: -6 },
+  initial: { opacity: 0, x: 8 },
   animate: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.62 },
+    x: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.28 },
   },
 };
 
@@ -73,152 +58,126 @@ export default function Navbar() {
             "0 2px 12px rgba(34, 34, 34, 0.055), 0 8px 32px rgba(34, 34, 34, 0.045), inset 0 1px 0 rgba(255,255,255,0.9)",
           borderRadius: "28px",
         }}
-        className="flex items-center justify-between h-[88px] px-7 md:px-9"
+        className="flex h-[76px] items-center justify-between px-6 md:h-[84px] md:px-9"
       >
         {/* ── Logo ─────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-        >
+        <motion.div variants={logoVariant} initial="initial" animate="animate">
           <Link
             href="/"
             aria-label="Daeluxe — Luxury Real Estate Home"
-            className="group flex items-baseline gap-[3px] select-none"
+            className="group inline-flex flex-col select-none"
           >
-            <span
-              className="font-sans font-semibold text-deep-charcoal leading-none"
-              style={{ fontSize: "clamp(1.05rem, 1.5vw, 1.22rem)", letterSpacing: "-0.035em" }}
-            >
-              Daeluxe
+            <span className="flex items-baseline gap-[5px]">
+              <span
+                className="font-playfair font-semibold leading-none text-[#1A1714] transition-colors duration-300 group-hover:text-[#141210]"
+                style={{
+                  fontSize: "clamp(1.35rem, 2.2vw, 1.75rem)",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Dae
+                <span className="italic font-medium text-[#8B7355]">luxe</span>
+              </span>
+              <span
+                aria-hidden="true"
+                className="mb-[3px] h-[5px] w-[5px] shrink-0 rounded-full bg-gradient-to-br from-[#DDC7A1] to-[#A17C5F] transition-transform duration-500 group-hover:scale-110"
+                style={{ boxShadow: "0 0 8px rgba(221,199,161,0.45)" }}
+              />
             </span>
             <span
-              aria-hidden="true"
-              style={{
-                display: "inline-block",
-                width: "4px",
-                height: "4px",
-                borderRadius: "50%",
-                marginBottom: "2px",
-                flexShrink: 0,
-                background: "#302f2f",
-              }}
-            />
+              className="mt-1 font-sans text-[9px] font-semibold uppercase tracking-[0.28em] text-[#1A1714]/40 transition-colors duration-300 group-hover:text-[#8B7355]/70 md:text-[10px]"
+            >
+              Real Estate Advisors
+            </span>
           </Link>
         </motion.div>
 
-        {/* ── Nav links ─────────────────────────── */}
-        <motion.ul
-          role="list"
-          variants={linkContainerVariant}
-          initial="initial"
-          animate="animate"
-          className="hidden md:flex items-center gap-1"
-        >
-          {NAV_LINKS.map(({ label, href }) => (
-            <motion.li key={label} variants={linkVariant}>
-              <NavLink href={href} label={label} />
-            </motion.li>
-          ))}
-        </motion.ul>
-
-        {/* ── Contact Us Button ─────────────────── */}
+        {/* ── Call Us Now ─────────────────────────── */}
         <motion.div variants={buttonVariant} initial="initial" animate="animate">
-          <ContactButton />
+          <CallButton />
         </motion.div>
       </motion.nav>
     </div>
   );
 }
 
-/* ── NavLink ───────────────────────────────────────────── */
+/* ── CallButton ─────────────────────────────────────── */
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function CallButton() {
   return (
     <motion.a
-      href={href}
-      whileHover={{ y: -1 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex items-center px-4 py-2 font-sans font-medium text-[0.875rem] text-deep-charcoal/90 tracking-[-0.005em] select-none cursor-pointer"
-    >
-      <span className="relative z-10 transition-colors duration-300 group-hover:text-deep-charcoal text-base">
-        {label}
-      </span>
-      <span
-        aria-hidden="true"
-        className="absolute bottom-[6px] left-4 right-4 h-[1.5px] rounded-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{
-          background:
-            "linear-gradient(90deg, #1C1D1F 0%, #3A3D40 50%, #1C1D1F 100%)",
-        }}
-      />
-    </motion.a>
-  );
-}
-
-/* ── ContactButton ─────────────────────────────────────── */
-
-function ContactButton() {
-  return (
-    <motion.a
-      href="#contact"
+      href={PHONE}
+      aria-label={`Call us now at ${PHONE_DISPLAY}`}
       whileHover={{
         y: -2,
-        boxShadow:
-          "0 8px 28px rgba(34, 34, 34, 0.22), 0 2px 8px rgba(34, 34, 34, 0.14), 0 0 0 1px rgba(34,34,34,0.18), 0 0 24px rgba(221, 199, 161, 0.12)",
-        background:
-          "linear-gradient(160deg, #2e2e2e 0%, #1a1a1a 60%, #222222 100%)",
+        boxShadow: [
+          "0 14px 40px rgba(0,0,0,0.28)",
+          "0 4px 12px rgba(0,0,0,0.16)",
+          "inset 0 1px 0 rgba(255,255,255,0.12)",
+          "0 0 0 1px rgba(221,199,161,0.18)",
+        ].join(", "),
       }}
-      whileTap={{ scale: 0.97, y: 0 }}
+      whileTap={{ scale: 0.98, y: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative inline-flex items-center gap-2 select-none cursor-pointer overflow-hidden"
+      className="group relative inline-flex cursor-pointer select-none items-center gap-2.5 overflow-hidden sm:gap-3"
       style={{
         borderRadius: "100px",
-        paddingInline: "clamp(18px, 2vw, 24px)",
-        paddingBlock: "11px",
+        paddingInline: "clamp(14px, 2vw, 22px)",
+        paddingBlock: "clamp(9px, 1.2vw, 11px)",
         background:
-          "linear-gradient(160deg, #282828 0%, #1c1c1c 60%, #222222 100%)",
-        border: "1px solid rgba(255, 255, 255, 0.10)",
-        boxShadow:
-          "0 4px 16px rgba(34, 34, 34, 0.18), 0 1px 4px rgba(34, 34, 34, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+          "linear-gradient(145deg, rgba(24,19,14,0.90) 0%, rgba(14,11,8,0.94) 100%)",
+        backdropFilter: "blur(20px) saturate(1.55)",
+        WebkitBackdropFilter: "blur(20px) saturate(1.55)",
+        border: "1px solid rgba(221,199,161,0.26)",
+        boxShadow: [
+          "0 6px 24px rgba(0,0,0,0.22)",
+          "0 2px 6px rgba(0,0,0,0.12)",
+          "inset 0 1px 0 rgba(255,255,255,0.10)",
+        ].join(", "),
       }}
     >
-      {/* Inner top highlight */}
+      {/* Top shimmer */}
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px pointer-events-none"
+        className="pointer-events-none absolute inset-x-3 top-0 h-px"
         style={{
           background:
-            "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.16) 50%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, rgba(221,199,161,0.45) 50%, transparent 100%)",
         }}
       />
 
-      {/* Warm radial glow on hover */}
+      {/* Hover glow */}
       <span
         aria-hidden="true"
-        className="absolute -inset-[1px] rounded-[100px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500"
+        className="pointer-events-none absolute inset-0 rounded-[100px] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 120%, rgba(221,199,161,0.09) 0%, transparent 70%)",
+            "radial-gradient(ellipse at 50% 120%, rgba(221,199,161,0.12) 0%, transparent 70%)",
         }}
       />
 
+      {/* Phone icon */}
       <span
-        className="relative z-10 font-sans font-medium tracking-[-0.01em] text-[#F9F9F9]"
-        style={{ fontSize: "0.845rem" }}
+        className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-300 group-hover:bg-[rgba(221,199,161,0.20)] sm:h-9 sm:w-9"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(221,199,161,0.20) 0%, rgba(221,199,161,0.08) 100%)",
+          border: "1px solid rgba(221,199,161,0.32)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10)",
+        }}
       >
-        Contact Us
+        <RiPhoneLine className="text-[15px] text-[#E8D4B0] sm:text-base" />
       </span>
 
-      <motion.span
-        className="relative z-10 flex items-center text-[#DDC7A1]"
-        style={{ fontSize: "0.9rem" }}
-        initial={{ x: 0 }}
-        whileHover={{ x: 2 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <RiArrowRightUpLine aria-hidden="true" />
-      </motion.span>
+      {/* Label + number */}
+      <span className="relative z-10 flex flex-col items-start gap-0.5 pr-0.5">
+        <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-[#C9A573] sm:text-[11px]">
+          Call Us Now
+        </span>
+        <span className="whitespace-nowrap font-sans text-[12px] font-semibold leading-none text-white transition-colors duration-300 group-hover:text-[#F5EDE0] sm:text-[13px]">
+          {PHONE_DISPLAY}
+        </span>
+      </span>
     </motion.a>
   );
 }

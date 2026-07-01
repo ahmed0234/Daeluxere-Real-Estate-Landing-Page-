@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useLenis } from "lenis/react";
-import { RiPhoneLine, RiCalendarLine, RiArrowRightLine } from "react-icons/ri";
+import { RiPhoneLine, RiCalendarLine } from "react-icons/ri";
 
 /* ─────────────────────────────────────────────
    Floating CTA
@@ -15,47 +15,20 @@ import { RiPhoneLine, RiCalendarLine, RiArrowRightLine } from "react-icons/ri";
 const PHONE = "tel:+17209168926";
 const PHONE_DISPLAY = "(720) 916-8926";
 
-/* Gentle spring for magnetic hover effect on the primary button */
-function useMagnetic(strength = 0.28) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 200, damping: 18, mass: 0.12 });
-  const springY = useSpring(y, { stiffness: 200, damping: 18, mass: 0.12 });
-  const ref = useRef<HTMLButtonElement>(null);
-
-  const onMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left - rect.width / 2) * strength);
-    y.set((e.clientY - rect.top - rect.height / 2) * strength);
-  }, [x, y, strength]);
-
-  const onLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
-
-  return { ref, springX, springY, onMove, onLeave };
-}
-
 export default function FloatingCTA() {
   const [visible, setVisible] = useState(false);
-  const [isHighlighting, setIsHighlighting] = useState(false);
   const heroRef = useRef<Element | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const magnetic = useMagnetic(0.3);
   const lenis = useLenis();
 
   /* ── Track hero section visibility ── */
   useEffect(() => {
-    // The hero `<main>` has the class "flex-1 flex flex-col"
-    // Use the bento `<section>` inside it as sentinel
-    heroRef.current = document.querySelector(
-      "main > section.relative.flex-1.rounded-\\[32px\\]"
-    ) ?? document.querySelector("main > section");
+    heroRef.current =
+      document.querySelector(
+        "main > section.relative.flex-1.rounded-\\[32px\\]"
+      ) ?? document.querySelector("main > section");
 
     if (!heroRef.current) {
-      // Fallback: use the very first section on the page
       heroRef.current = document.querySelector("section");
     }
 
@@ -63,14 +36,9 @@ export default function FloatingCTA() {
 
     observerRef.current = new IntersectionObserver(
       ([entry]) => {
-        // Show CTA when hero is NOT intersecting (scrolled past it)
         setVisible(!entry.isIntersecting);
       },
-      {
-        // Trigger when the hero is fully out of viewport
-        threshold: 0,
-        rootMargin: "0px 0px 0px 0px",
-      }
+      { threshold: 0, rootMargin: "0px" }
     );
 
     observerRef.current.observe(heroRef.current);
@@ -85,38 +53,28 @@ export default function FloatingCTA() {
     const form = document.getElementById("consultation");
     if (!form) return;
 
+    const highlightForm = () => {
+      form.classList.add("cta-highlight-active");
+      setTimeout(() => {
+        form.classList.remove("cta-highlight-active");
+      }, 1600);
+    };
+
     if (lenis) {
-      // Use Lenis scroll engine for flawless custom scroll
       lenis.scrollTo(form, {
         offset: -40,
         duration: 1.0,
         immediate: false,
-        onComplete: () => {
-          setIsHighlighting(true);
-          form.classList.add("cta-highlight-active");
-          setTimeout(() => {
-            setIsHighlighting(false);
-            form.classList.remove("cta-highlight-active");
-          }, 1600);
-        }
+        onComplete: highlightForm,
       });
     } else {
-      // Fallback
       form.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => {
-        setIsHighlighting(true);
-        form.classList.add("cta-highlight-active");
-        setTimeout(() => {
-          setIsHighlighting(false);
-          form.classList.remove("cta-highlight-active");
-        }, 1600);
-      }, 700);
+      setTimeout(highlightForm, 700);
     }
   }, [lenis]);
 
   return (
     <>
-      {/* ── Form highlight injection (keyframe via style tag) ── */}
       <style>{`
         @keyframes ctaFormPulse {
           0%   { box-shadow: 0 0 0 0 rgba(221,199,161,0), transform: scale(1); }
@@ -137,155 +95,94 @@ export default function FloatingCTA() {
         {visible && (
           <motion.div
             key="floating-cta"
-            initial={{ opacity: 0, y: 24, scale: 0.94, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: 20, scale: 0.94, filter: "blur(4px)" }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 right-4 z-50 flex flex-col gap-2.5 sm:right-6 md:bottom-8 md:right-8 w-[calc(100%-2rem)] max-w-[315px] sm:w-[315px]"
+            initial={{ opacity: 0, y: 12, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-4 right-4 z-50 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6"
             aria-label="Floating contact options"
           >
-            {/* ── Glass card wrapper ── */}
+            {/* Compact glass pill */}
             <div
-              className="relative overflow-hidden rounded-[22px] p-3 sm:p-3.5"
+              className="relative flex items-stretch overflow-hidden rounded-full"
               style={{
                 background:
-                  "linear-gradient(145deg, rgba(20,15,10,0.82) 0%, rgba(12,9,6,0.90) 100%)",
-                backdropFilter: "blur(28px) saturate(1.5)",
-                WebkitBackdropFilter: "blur(28px) saturate(1.5)",
-                border: "1px solid rgba(255,255,255,0.10)",
+                  "linear-gradient(145deg, rgba(22,18,14,0.92) 0%, rgba(14,11,8,0.96) 100%)",
+                backdropFilter: "blur(24px) saturate(1.6)",
+                WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                border: "1px solid rgba(221,199,161,0.22)",
                 boxShadow: [
-                  "0 24px 64px rgba(0,0,0,0.38)",
-                  "0 4px 12px rgba(0,0,0,0.22)",
-                  "inset 0 1px 0 rgba(255,255,255,0.08)",
-                  "0 0 0 1px rgba(221,199,161,0.06)",
+                  "0 12px 36px rgba(0,0,0,0.32)",
+                  "0 4px 10px rgba(0,0,0,0.18)",
+                  "inset 0 1px 0 rgba(255,255,255,0.10)",
+                  "0 0 0 1px rgba(221,199,161,0.08)",
                 ].join(", "),
               }}
             >
               {/* Top shimmer */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(221,199,161,0.35)] to-transparent" />
+              <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(221,199,161,0.45)] to-transparent" />
               {/* Warm corner glow */}
-              <div className="pointer-events-none absolute left-0 top-0 h-20 w-28 rounded-tl-[22px] bg-gradient-to-br from-[rgba(221,199,161,0.06)] to-transparent" />
+              <div className="pointer-events-none absolute left-0 top-0 h-full w-1/2 rounded-l-full bg-gradient-to-r from-[rgba(221,199,161,0.06)] to-transparent" />
 
-              {/* ── Label ── */}
-              {/* <div className="mb-2.5 flex items-center gap-2 px-1">
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-[#C9A573]"
-                  style={{ boxShadow: "0 0 6px 2px rgba(201,165,115,0.55)" }}
-                />
-                <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.20em] text-white/40">
-                  Daeluxe
-                </span>
-              </div> */}
-
-              {/* ── Primary CTA ── */}
+              {/* Primary — Consultation */}
               <motion.button
-                ref={magnetic.ref}
+                type="button"
                 onClick={handleConsultation}
-                onMouseMove={magnetic.onMove}
-                onMouseLeave={magnetic.onLeave}
-                style={{ x: magnetic.springX, y: magnetic.springY }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="group cursor-pointer relative w-full overflow-hidden rounded-[14px] px-4 py-3 text-left sm:px-5 sm:py-3.5"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(221,199,161,0.18) 0%, rgba(221,199,161,0.07) 100%)",
-                  border: "1px solid rgba(221,199,161,0.28)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10)",
-                } as React.CSSProperties}
+                whileTap={{ scale: 0.98 }}
+                className="group relative flex cursor-pointer items-center gap-2 px-3 py-2.5 transition-colors duration-300 hover:bg-[rgba(221,199,161,0.08)] sm:gap-2.5 sm:px-4 sm:py-2.5"
+                aria-label="Get a free consultation"
               >
-                {/* Button shimmer on hover */}
-                <motion.span
-                  className="pointer-events-none absolute inset-0 rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                <span
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors duration-300 group-hover:bg-[rgba(221,199,161,0.22)] sm:h-8 sm:w-8"
                   style={{
                     background:
-                      "radial-gradient(ellipse at 50% 0%, rgba(221,199,161,0.12) 0%, transparent 70%)",
+                      "linear-gradient(135deg, rgba(221,199,161,0.22) 0%, rgba(221,199,161,0.10) 100%)",
+                    border: "1px solid rgba(221,199,161,0.38)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)",
                   }}
-                />
-                <span className="relative flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2.5">
-                    <span
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(221,199,161,0.22) 0%, rgba(221,199,161,0.08) 100%)",
-                        border: "1px solid rgba(221,199,161,0.30)",
-                      }}
-                    >
-                      <RiCalendarLine className="text-[#DDC7A1] text-sm" />
-                    </span>
-                    <span className="flex flex-col gap-0.5">
-                      <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-[#C9A573]">
-                        Free
-                      </span>
-                      <span className="font-sans text-[14px] font-bold leading-none text-white">
-                        Consultation
-                      </span>
-                    </span>
+                >
+                  <RiCalendarLine className="text-[13px] text-[#E8D4B0] sm:text-sm" />
+                </span>
+                <span className="flex flex-col items-start gap-0 pr-0.5">
+                  <span className="hidden font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-[#C9A573] sm:block">
+                    Free
                   </span>
-                  <motion.span
-                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/60 group-hover:border-[rgba(221,199,161,0.5)] group-hover:text-[#DDC7A1]"
-                    style={{ transition: "all 0.3s ease" }}
-                    whileHover={{ rotate: -45 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <RiArrowRightLine className="text-xs" />
-                  </motion.span>
+                  <span className="whitespace-nowrap font-sans text-[12px] font-semibold leading-none text-white transition-colors duration-300 group-hover:text-[#F5EDE0] sm:text-[13px]">
+                    Consultation
+                  </span>
                 </span>
               </motion.button>
 
-              {/* ── Divider ── */}
-              <div className="my-2.5 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+              {/* Divider */}
+              <div className="my-2 w-px shrink-0 bg-gradient-to-b from-transparent via-[rgba(221,199,161,0.22)] to-transparent" />
 
-              {/* ── Secondary CTA: Call Now ── */}
+              {/* Secondary — Call */}
               <motion.a
                 href={PHONE}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className="group flex w-full items-center gap-3 rounded-[14px] px-4 py-2.5 sm:px-5 sm:py-3"
-                style={{
-                  background: "transparent",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  transition: "border-color 0.3s ease, background 0.3s ease",
-                }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative flex items-center gap-2 px-3 py-2.5 transition-colors duration-300 hover:bg-white/[0.06] sm:gap-2.5 sm:px-4 sm:py-2.5"
                 aria-label={`Call us at ${PHONE_DISPLAY}`}
               >
-                {/* Pulsing phone icon container */}
-                <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/[0.07] transition-colors duration-300 group-hover:bg-white/[0.12]">
-                  {/* Pulse ring */}
-                  <motion.span
-                    className="absolute inset-0 rounded-full border border-white/15"
-                    animate={{ scale: [1, 1.55], opacity: [0.6, 0] }}
-                    transition={{
-                      duration: 1.8,
-                      repeat: Infinity,
-                      ease: "easeOut",
-                      repeatDelay: 0.6,
-                    }}
-                  />
-                  <RiPhoneLine className="relative text-white/75 text-sm group-hover:text-white transition-colors duration-300" />
+                <span
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors duration-300 group-hover:bg-white/[0.14] sm:h-8 sm:w-8"
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                  }}
+                >
+                  <RiPhoneLine className="text-[13px] text-white/90 transition-colors duration-300 group-hover:text-white sm:text-sm" />
                 </span>
-
-                <span className="flex flex-col gap-px">
-                  <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 group-hover:text-white/60 transition-colors duration-300">
-                    Call Us Now
+                <span className="flex flex-col items-start gap-0 pr-0.5">
+                  <span className="hidden font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-white/55 transition-colors duration-300 group-hover:text-white/75 sm:block">
+                    Call
                   </span>
-                  <span className="font-sans text-[13px] font-bold leading-none text-white/80 group-hover:text-white transition-colors duration-300">
-                    {PHONE_DISPLAY}
+                  <span className="whitespace-nowrap font-sans text-[12px] font-semibold leading-none text-white/90 transition-colors duration-300 group-hover:text-white sm:text-[13px]">
+                    <span className="sm:hidden">Call Now</span>
+                    <span className="hidden sm:inline">{PHONE_DISPLAY}</span>
                   </span>
                 </span>
               </motion.a>
             </div>
-
-            {/* ── Dismiss hint (tiny) ── */}
-            <motion.p
-              className="text-center font-sans text-[10px] text-black/25 dark:text-white/20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              Scroll up to dismiss
-            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>

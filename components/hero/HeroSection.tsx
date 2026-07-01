@@ -151,7 +151,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#100d08]/25 via-transparent to-transparent" />
 
         {/* ── Content grid ── */}
-        <div className="relative z-10 min-h-[92vh] grid grid-cols-1 lg:grid-cols-[1fr_460px] xl:grid-cols-[1fr_490px] gap-6 px-4 sm:px-8 md:px-14 lg:px-16 py-10 md:py-14 lg:py-16 items-center">
+        <div className="relative z-10 min-h-[92vh] grid grid-cols-1 lg:grid-cols-[1fr_520px] xl:grid-cols-[1fr_560px] 2xl:grid-cols-[1fr_580px] gap-6 px-4 sm:px-8 md:px-14 lg:px-16 py-10 md:py-14 lg:py-16 items-center">
           {/* ════════════════════════════════
               LEFT COLUMN
           ════════════════════════════════ */}
@@ -386,7 +386,7 @@ export default function HeroSection() {
           {/* ════════════════════════════════
               RIGHT COLUMN
           ════════════════════════════════ */}
-          <div className="relative flex flex-col items-stretch lg:items-end justify-center gap-4 w-full max-w-lg mx-auto lg:max-w-none lg:mx-0">
+          <div className="relative flex flex-col items-stretch lg:items-end justify-center gap-4 w-full max-w-xl mx-auto lg:max-w-none lg:mx-0">
             {/* Consultation Wizard */}
             <motion.div
               id="consultation"

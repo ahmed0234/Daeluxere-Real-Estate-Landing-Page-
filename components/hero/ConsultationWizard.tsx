@@ -63,12 +63,7 @@ const FEATURES = [
   "Smart Home Technology",
 ];
 
-const BUDGETS = [
-  "Under $300K",
-  "$300K–$500K",
-  "$500K–$700K",
-  "$750K+",
-];
+const BUDGETS = ["Under $300K", "$300K–$500K", "$500K–$700K", "$750K+"];
 
 /* ── Motion variants ─────────────────────────────────────── */
 
@@ -111,11 +106,12 @@ function OptionButton({
       whileHover={{ scale: 1.02, y: -1 }}
       whileTap={{ scale: 0.98 }}
       className={`
-        relative w-full text-left px-4 py-3.5 rounded-2xl border transition-all duration-200 cursor-pointer
-        text-sm font-medium tracking-wide backdrop-blur-md
-        ${selected
-          ? "border-champagne-gold/80 bg-champagne-gold/28 text-champagne-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_8px_32px_rgba(221,199,161,0.22),0_0_0_1px_rgba(221,199,161,0.15)]"
-          : "border-white/22 bg-white/10 text-white hover:border-white/38 hover:bg-white/16 hover:text-white"
+        relative w-full text-left px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border transition-all duration-200 cursor-pointer
+        text-sm sm:text-[0.9375rem] font-medium tracking-wide backdrop-blur-md
+        ${
+          selected
+            ? "border-champagne-gold/80 bg-champagne-gold/28 text-champagne-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_8px_32px_rgba(221,199,161,0.22),0_0_0_1px_rgba(221,199,161,0.15)]"
+            : "border-white/22 bg-white/10 text-white hover:border-white/38 hover:bg-white/16 hover:text-white"
         }
         ${className}
       `}
@@ -125,7 +121,7 @@ function OptionButton({
           layoutId="option-check"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-champagne-gold flex items-center justify-center"
+          className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 w-5 h-5 sm:w-[1.375rem] sm:h-[1.375rem] rounded-full bg-champagne-gold flex items-center justify-center"
         >
           <RiCheckLine className="text-[#222] text-xs" />
         </motion.span>
@@ -150,10 +146,11 @@ function PillButton({
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
       className={`
-        px-4 py-2.5 rounded-full border text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer backdrop-blur-md
-        ${selected
-          ? "border-champagne-gold/80 bg-champagne-gold/28 text-champagne-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_8px_20px_rgba(221,199,161,0.22)]"
-          : "border-white/22 bg-white/10 text-white hover:border-white/38 hover:text-white hover:bg-white/16"
+        px-4 py-2.5 sm:px-[1.125rem] sm:py-3 rounded-full border text-sm sm:text-[0.9375rem] font-medium tracking-wide transition-all duration-200 cursor-pointer backdrop-blur-md
+        ${
+          selected
+            ? "border-champagne-gold/80 bg-champagne-gold/28 text-champagne-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_8px_20px_rgba(221,199,161,0.22)]"
+            : "border-white/22 bg-white/10 text-white hover:border-white/38 hover:text-white hover:bg-white/16"
         }
       `}
     >
@@ -214,10 +211,12 @@ export default function ConsultationWizard() {
 
   return (
     <div
-      className="relative rounded-[28px] p-7 w-full flex flex-col gap-0 select-none overflow-hidden"
+      id="consultation"
+      className="relative rounded-[28px] p-5 sm:p-7 lg:p-8 xl:p-9 w-full flex flex-col gap-0 select-none overflow-hidden"
       style={{
         /* Dark Charcoal Glass — deep background so white text is crisp and readable */
-        background: "linear-gradient(145deg, rgba(14, 12, 10, 0.82) 0%, rgba(22, 18, 14, 0.75) 100%)",
+        background:
+          "linear-gradient(145deg, rgba(14, 12, 10, 0.82) 0%, rgba(22, 18, 14, 0.75) 100%)",
         backdropFilter: "blur(56px) saturate(1.6) brightness(0.9)",
         WebkitBackdropFilter: "blur(56px) saturate(1.6) brightness(0.9)",
         border: "1px solid rgba(255, 255, 255, 0.12)",
@@ -243,11 +242,11 @@ export default function ConsultationWizard() {
       {/* Champagne warm tint at bottom */}
       <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-champagne-gold/[0.07] to-transparent pointer-events-none" />
       {/* ── Header ── */}
-      <div className="flex items-center gap-2.5 mb-5">
-        <div className="w-7 h-7 rounded-full bg-champagne-gold/25 border border-champagne-gold/50 flex items-center justify-center shadow-[0_0_12px_rgba(221,199,161,0.25)]">
-          <RiSparklingLine className="text-champagne-gold text-sm" />
+      <div className="flex items-center gap-2.5 sm:gap-3 mb-5 sm:mb-6">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-champagne-gold/25 border border-champagne-gold/50 flex items-center justify-center shadow-[0_0_12px_rgba(221,199,161,0.25)]">
+          <RiSparklingLine className="text-champagne-gold text-sm sm:text-base" />
         </div>
-        <span className="text-champagne-gold text-base font-bold tracking-[0.16em] uppercase drop-shadow-[0_1px_4px_rgba(221,199,161,0.4)]">
+        <span className="text-champagne-gold text-sm sm:text-base lg:text-[1.05rem] font-bold tracking-[0.16em] uppercase drop-shadow-[0_1px_4px_rgba(221,199,161,0.4)]">
           Free Consultation
         </span>
       </div>
@@ -255,16 +254,16 @@ export default function ConsultationWizard() {
       {!submitted ? (
         <>
           {/* ── Progress ── */}
-          <div className="mb-5">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-white/90 text-xs tracking-wide font-semibold">
+          <div className="mb-5 sm:mb-6">
+            <div className="flex justify-between items-center mb-2.5">
+              <span className="text-white/90 text-xs sm:text-sm tracking-wide font-semibold">
                 Question {step} of {TOTAL_STEPS}
               </span>
-              <span className="text-champagne-gold text-xs font-bold drop-shadow-[0_0_6px_rgba(221,199,161,0.5)]">
+              <span className="text-champagne-gold text-xs sm:text-sm font-bold drop-shadow-[0_0_6px_rgba(221,199,161,0.5)]">
                 {Math.round(progress)}%
               </span>
             </div>
-            <div className="h-1.5 bg-white/15 rounded-full overflow-hidden shadow-inner">
+            <div className="h-1.5 sm:h-[7px] bg-white/15 rounded-full overflow-hidden shadow-inner">
               <motion.div
                 className="h-full bg-gradient-to-r from-champagne-gold via-warm-ochre to-champagne-gold rounded-full shadow-[0_0_10px_rgba(221,199,161,0.6)]"
                 animate={{ width: `${progress}%` }}
@@ -274,7 +273,7 @@ export default function ConsultationWizard() {
           </div>
 
           {/* ── Step Content ── */}
-          <div className="overflow-hidden min-h-[320px] flex flex-col">
+          <div className="overflow-hidden min-h-[300px] sm:min-h-[340px] lg:min-h-[360px] flex flex-col">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={step}
@@ -283,24 +282,27 @@ export default function ConsultationWizard() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="flex flex-col gap-3 flex-1"
+                className="flex flex-col gap-3 sm:gap-3.5 flex-1"
               >
                 {/* Step 1 — Property Type */}
                 {step === 1 && (
                   <>
-                    <h3 className="text-white text-[1.35rem] font-bold mb-2 leading-snug">
-                      What type of home are<br />
-                      <em className="text-champagne-gold font-semibold">you looking for?</em>
+                    <h3 className="text-white text-[1.25rem] sm:text-[1.4rem] lg:text-[1.5rem] font-bold mb-2 sm:mb-3 leading-snug">
+                      What type of home are
+                      <br />
+                      <em className="text-champagne-gold font-semibold">
+                        you looking for?
+                      </em>
                     </h3>
-                    <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {PROPERTY_TYPES.map(({ id, label, icon: Icon }) => (
                         <OptionButton
                           key={id}
                           selected={data.propertyType === id}
                           onClick={() => pick("propertyType", id)}
                         >
-                          <span className="flex items-center gap-3">
-                            <Icon className="text-champagne-gold text-base flex-shrink-0" />
+                          <span className="flex items-center gap-3 sm:gap-3.5">
+                            <Icon className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
                             {label}
                           </span>
                         </OptionButton>
@@ -312,11 +314,12 @@ export default function ConsultationWizard() {
                 {/* Step 2 — Timeline */}
                 {step === 2 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      When are you planning<br />
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      When are you planning
+                      <br />
                       <em className="text-champagne-gold">to move?</em>
                     </h3>
-                    <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {TIMELINES.map((t) => (
                         <OptionButton
                           key={t}
@@ -333,11 +336,12 @@ export default function ConsultationWizard() {
                 {/* Step 3 — Bedrooms */}
                 {step === 3 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      How many<br />
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      How many
+                      <br />
                       <em className="text-champagne-gold">bedrooms?</em>
                     </h3>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5 sm:gap-3">
                       {BEDROOMS.map((b) => (
                         <motion.button
                           key={b}
@@ -345,10 +349,11 @@ export default function ConsultationWizard() {
                           whileTap={{ scale: 0.96 }}
                           onClick={() => pick("bedrooms", b)}
                           className={`
-                            flex-1 py-5 rounded-2xl border text-base font-semibold transition-all duration-200 cursor-pointer
-                            ${data.bedrooms === b
-                              ? "border-champagne-gold bg-champagne-gold/12 text-champagne-gold"
-                              : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:text-white"
+                            flex-1 py-4 sm:py-5 lg:py-[1.375rem] rounded-2xl border text-sm sm:text-base font-semibold transition-all duration-200 cursor-pointer
+                            ${
+                              data.bedrooms === b
+                                ? "border-champagne-gold bg-champagne-gold/12 text-champagne-gold"
+                                : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:text-white"
                             }
                           `}
                         >
@@ -362,11 +367,12 @@ export default function ConsultationWizard() {
                 {/* Step 4 — Area */}
                 {step === 4 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      What&apos;s your preferred<br />
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      What&apos;s your preferred
+                      <br />
                       <em className="text-champagne-gold">area?</em>
                     </h3>
-                    <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {AREAS.map((a) => (
                         <OptionButton
                           key={a}
@@ -383,12 +389,15 @@ export default function ConsultationWizard() {
                 {/* Step 5 — Features */}
                 {step === 5 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      Which features<br />
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      Which features
+                      <br />
                       <em className="text-champagne-gold">matter most?</em>
                     </h3>
-                    <p className="text-white/40 text-xs mb-1">Select all that apply</p>
-                    <div className="flex flex-wrap gap-2">
+                    <p className="text-white/40 text-xs sm:text-sm mb-1">
+                      Select all that apply
+                    </p>
+                    <div className="flex flex-wrap gap-2 sm:gap-2.5">
                       {FEATURES.map((f) => (
                         <PillButton
                           key={f}
@@ -403,7 +412,7 @@ export default function ConsultationWizard() {
                       onClick={goNext}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="mt-auto w-full py-3.5 rounded-2xl bg-champagne-gold/12 border border-champagne-gold/30 text-champagne-gold text-sm font-semibold tracking-wide hover:bg-champagne-gold/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                      className="mt-auto w-full py-3.5 sm:py-4 rounded-2xl bg-champagne-gold/12 border border-champagne-gold/30 text-champagne-gold text-sm sm:text-[0.9375rem] font-semibold tracking-wide hover:bg-champagne-gold/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
                     >
                       Continue
                       <RiArrowRightLine />
@@ -414,11 +423,12 @@ export default function ConsultationWizard() {
                 {/* Step 6 — Budget */}
                 {step === 6 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      What&apos;s your<br />
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      What&apos;s your
+                      <br />
                       <em className="text-champagne-gold">target budget?</em>
                     </h3>
-                    <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {BUDGETS.map((b) => (
                         <OptionButton
                           key={b}
@@ -435,39 +445,48 @@ export default function ConsultationWizard() {
                 {/* Step 7 — Contact */}
                 {step === 7 && (
                   <>
-                    <h3 className="text-white text-xl font-semibold mb-1 leading-snug">
-                      Last step —<br />
-                      <em className="text-champagne-gold">how to reach you?</em>
+                    <h3 className="text-white text-[1.2rem] sm:text-[1.35rem] lg:text-[1.45rem] font-semibold mb-1 sm:mb-2 leading-snug">
+                      Last step
+                      <br />
+                      <em className="text-champagne-gold">
+                        Enter your Details so we will contact you
+                      </em>
                     </h3>
-                    <div className="flex flex-col gap-3">
-                      <label className="flex items-center gap-3 px-4 py-3.5 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiPhoneLine className="text-champagne-gold text-base flex-shrink-0" />
+                    <div className="flex flex-col gap-3 sm:gap-3.5">
+                      <label className="flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
+                        <RiPhoneLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
                         <input
                           type="tel"
                           placeholder="Phone Number"
                           value={data.phone}
-                          onChange={(e) => setData((d) => ({ ...d, phone: e.target.value }))}
-                          className="bg-transparent text-white text-sm placeholder:text-white/60 outline-none w-full font-medium"
+                          onChange={(e) =>
+                            setData((d) => ({ ...d, phone: e.target.value }))
+                          }
+                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
                         />
                       </label>
-                      <label className="flex items-center gap-3 px-4 py-3.5 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiMailLine className="text-champagne-gold text-base flex-shrink-0" />
+                      <label className="flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
+                        <RiMailLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
                         <input
                           type="email"
                           placeholder="Email Address"
                           value={data.email}
-                          onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
-                          className="bg-transparent text-white text-sm placeholder:text-white/60 outline-none w-full font-medium"
+                          onChange={(e) =>
+                            setData((d) => ({ ...d, email: e.target.value }))
+                          }
+                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
                         />
                       </label>
-                      <label className="flex items-start gap-3 px-4 py-3.5 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiMessage2Line className="text-champagne-gold text-base flex-shrink-0 mt-0.5" />
+                      <label className="flex items-start gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
+                        <RiMessage2Line className="text-champagne-gold text-base sm:text-lg flex-shrink-0 mt-0.5" />
                         <textarea
                           placeholder="Any comments or questions..."
                           value={data.comments}
-                          onChange={(e) => setData((d) => ({ ...d, comments: e.target.value }))}
+                          onChange={(e) =>
+                            setData((d) => ({ ...d, comments: e.target.value }))
+                          }
                           rows={3}
-                          className="bg-transparent text-white text-sm placeholder:text-white/60 outline-none w-full resize-none font-medium"
+                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full resize-none font-medium"
                         />
                       </label>
                     </div>
@@ -475,17 +494,20 @@ export default function ConsultationWizard() {
                       onClick={handleSubmit}
                       whileHover={{
                         scale: 1.02,
-                        boxShadow: "0 10px 48px rgba(221,199,161,0.28), 0 0 0 1px rgba(221,199,161,0.45)",
+                        boxShadow:
+                          "0 10px 48px rgba(221,199,161,0.28), 0 0 0 1px rgba(221,199,161,0.45)",
                         backgroundColor: "rgba(221,199,161,0.24)",
                       }}
                       whileTap={{ scale: 0.98 }}
-                      className="relative mt-2 w-full py-4 rounded-2xl text-white text-sm font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 overflow-hidden"
+                      className="relative mt-2 w-full py-4 sm:py-[1.125rem] rounded-2xl text-white text-sm sm:text-[0.9375rem] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 overflow-hidden"
                       style={{
-                        background: "linear-gradient(135deg, rgba(221, 199, 161, 0.22) 0%, rgba(221, 199, 161, 0.08) 100%)",
+                        background:
+                          "linear-gradient(135deg, rgba(221, 199, 161, 0.22) 0%, rgba(221, 199, 161, 0.08) 100%)",
                         backdropFilter: "blur(24px) saturate(1.6)",
                         WebkitBackdropFilter: "blur(24px) saturate(1.6)",
                         border: "1px solid rgba(221, 199, 161, 0.40)",
-                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.20), 0 4px 20px rgba(0,0,0,0.15)",
+                        boxShadow:
+                          "inset 0 1px 0 rgba(255,255,255,0.20), 0 4px 20px rgba(0,0,0,0.15)",
                       }}
                     >
                       {/* Top shimmer */}
@@ -493,7 +515,7 @@ export default function ConsultationWizard() {
                       Book My Free Consultation
                       <RiArrowRightLine className="text-champagne-gold" />
                     </motion.button>
-                    <p className="text-center text-white/50 text-xs mt-1">
+                    <p className="text-center text-white/50 text-xs sm:text-sm mt-1">
                       🔒 Your information is secure and confidential.
                     </p>
                   </>
@@ -504,10 +526,10 @@ export default function ConsultationWizard() {
 
           {/* ── Navigation ── */}
           {step > 1 && step < 7 && (
-            <div className="mt-4 pt-4 border-t border-white/8">
+            <div className="mt-4 sm:mt-5 pt-4 border-t border-white/8">
               <button
                 onClick={goBack}
-                className="flex items-center gap-1.5 text-white/35 text-xs hover:text-white/60 transition-colors duration-200 cursor-pointer"
+                className="flex items-center gap-1.5 text-white/35 text-xs sm:text-sm hover:text-white/60 transition-colors duration-200 cursor-pointer"
               >
                 <RiArrowLeftLine />
                 Back
@@ -536,7 +558,9 @@ export default function ConsultationWizard() {
               Thank You!
             </h3>
             <p className="text-white/95 text-sm lg:text-lg leading-normal">
-              Our Denver team will contact you<br />within 24 hours.
+              Our Denver team will contact you
+              <br />
+              within 24 hours.
             </p>
           </div>
           <div className="flex items-center gap-2 px-5 py-3 rounded-full border border-champagne-gold/25 bg-champagne-gold/8">

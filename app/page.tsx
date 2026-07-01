@@ -5,6 +5,9 @@ import PainPointsSection from "@/components/PainProblem";
 import Solution from "@/components/Solution";
 import ServicesSection from "@/components/services";
 import SuccessStoriesSection from "@/components/SuccessListings";
+import TestimonialsSection from "@/components/Testimonials";
+import FinalCTASection from "@/components/FinalCta";
+import Footer from "@/components/Footer";
 
 export default function Page() {
   return (
@@ -18,6 +21,9 @@ export default function Page() {
       <ServicesSection />
       <SuccessStoriesSection />
       <TeamSection />
+      <TestimonialsSection />
+      <FinalCTASection />
+      <Footer />
     </div>
   );
 }

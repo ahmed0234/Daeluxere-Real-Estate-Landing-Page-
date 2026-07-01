@@ -23,9 +23,54 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Daeluxe Real Estate Luxury Advisors in Denver, Colorado",
+  title: "Denver Luxury Real Estate | Buy & Sell Homes in Denver, Boulder & Aurora | Daeluxe Advisors",
   description:
-    "Denver's trusted luxury real estate advisors. Helping buyers, sellers, and investors find their perfect home across Denver, Aurora, and Boulder, Colorado.",
+    "Discover luxury homes and real estate in Denver, Boulder, and Aurora with Daeluxe Advisors. Trusted Denver real estate agents for buying, selling, or investing in high-end Colorado properties. Expert guidance, proven results, and personalized service for your next luxury move.",
+  icons: {
+    icon: "/favicon.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://daeluxe.com/",
+  },
+  openGraph: {
+    title: "Denver Luxury Real Estate | Buy & Sell Homes in Denver, Boulder & Aurora | Daeluxe Advisors",
+    description:
+      "Explore exclusive luxury real estate listings and expert services in Denver, Boulder, and Aurora. Work with Daeluxe Advisors — Denver’s leading luxury real estate specialists.",
+    url: "https://daeluxe.com/",
+    siteName: "Daeluxe Real Estate",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 1200,
+        height: 630,
+        alt: "Daeluxe Real Estate | Denver Luxury Homes",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Denver Luxury Real Estate | Buy & Sell Homes in Denver, Boulder & Aurora | Daeluxe Advisors",
+    description:
+      "Partner with Daeluxe Advisors for your Denver, Boulder, or Aurora luxury real estate journey. Unmatched expertise in Colorado’s premium property market.",
+    images: ["/og-image.png"],
+    site: "@daeluxerealty", // Update if your Twitter is different
+    creator: "@daeluxerealty",
+  },
+  themeColor: "#E8D4B0",
 };
 
 export default function RootLayout({
@@ -47,4 +92,3 @@ export default function RootLayout({
     </html>
   );
 }
-
