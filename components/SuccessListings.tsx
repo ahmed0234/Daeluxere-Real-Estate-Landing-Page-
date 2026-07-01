@@ -1,22 +1,20 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
 import {
   Navigation,
   Mousewheel,
   Keyboard,
   FreeMode,
-  Pagination,
   A11y,
 } from "swiper/modules";
+/* Only import the bare reset â€” no navigation/pagination CSS that ships blue defaults */
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/free-mode";
 import {
   Home,
   ArrowLeft,
@@ -34,15 +32,9 @@ import {
 /**
  * SuccessStoriesSection
  * ------------------------------------------------------------------
- * "Real Results. Real Stories." — a horizontally-scrollable carousel
+ * "Real Results. Real Stories." â€” a horizontally-scrollable carousel
  * of past closings used as social proof, not a listings page. Every
  * card links out to the corresponding Zillow listing in a new tab.
- *
- * BEFORE SHIPPING:
- * 1. Replace each `image` path below with real photography placed at
- *    /public/images/success-stories/listing-XX.jpg (or wire up a CMS).
- * 2. Replace every `zillowUrl` placeholder with the real Zillow link.
- * 3. Point the "See More Success Stories" button at the right route.
  */
 
 const successStories = [
@@ -55,7 +47,7 @@ const successStories = [
     baths: 5,
     sqft: "4,655",
     image: "/Listings/1.avif",
-    zillowUrl: "#", // TODO: replace with real Zillow URL
+    zillowUrl: "#",
   },
   {
     id: 2,
@@ -185,15 +177,15 @@ const fadeUp = {
   },
 };
 
-const pad = (n) => String(n).padStart(2, "0");
+const pad = (n: number) => String(n).padStart(2, "0");
 
-function PropertyCard({ story }) {
+function PropertyCard({ story }: { story: (typeof successStories)[0] }) {
   return (
     <a
       href={story.zillowUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`View ${story.addressLine1}, ${story.addressLine2} on Zillow — opens in a new tab`}
+      aria-label={`View ${story.addressLine1}, ${story.addressLine2} on Zillow â€” opens in a new tab`}
       className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-[0_18px_45px_-22px_rgba(40,30,15,0.3)] ring-1 ring-black/5 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-20px_rgba(40,30,15,0.35)]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
@@ -205,7 +197,7 @@ function PropertyCard({ story }) {
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
 
-        {/* hover scrim so the external-link badge always reads clearly */}
+        {/* hover scrim */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
         <span className="absolute left-4 top-4 rounded-full bg-[#C68A3D] px-3 py-1 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-white shadow-md">
@@ -251,22 +243,119 @@ function PropertyCard({ story }) {
   );
 }
 
+/* â”€â”€ Premium custom pagination dots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+function PaginationDots({
+  total,
+  active,
+  onDotClick,
+}: {
+  total: number;
+  active: number;
+  onDotClick: (i: number) => void;
+}) {
+  return (
+    <div
+      className="flex items-center justify-center gap-1.5"
+      role="tablist"
+      aria-label="Carousel navigation"
+    >
+      {Array.from({ length: total }).map((_, i) => {
+        const isActive = i === active;
+        return (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            aria-label={`Go to listing ${i + 1}`}
+            onClick={() => onDotClick(i)}
+            className="relative flex items-center justify-center transition-all duration-300 ease-out focus-visible:outline-none"
+            style={{ width: isActive ? 28 : 8, height: 8 }}
+          >
+            <span
+              className="absolute inset-0 rounded-full transition-all duration-300 ease-out"
+              style={{
+                background: isActive
+                  ? "linear-gradient(90deg, #d9a861, #a8713a)"
+                  : "rgba(26,23,20,0.18)",
+                boxShadow: isActive
+                  ? "0 1px 6px rgba(185,125,69,0.45)"
+                  : "none",
+              }}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* â”€â”€ Custom nav arrow button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+function NavArrow({
+  direction,
+  onClick,
+  disabled,
+}: {
+  direction: "prev" | "next";
+  onClick: () => void;
+  disabled: boolean;
+}) {
+  const Icon = direction === "prev" ? ArrowLeft : ArrowRight;
+  const isPrev = direction === "prev";
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={isPrev ? "Previous listing" : "Next listing"}
+      whileTap={disabled ? {} : { scale: 0.92 }}
+      className={[
+        "flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+        isPrev
+          ? "border border-black/12 bg-white text-[#1a1714] hover:border-[#C68A3D] hover:text-[#C68A3D]"
+          : "bg-[#1a1714] text-white hover:bg-[#2c2219]",
+        disabled ? "pointer-events-none opacity-35" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <Icon className="h-4 w-4" strokeWidth={2} />
+    </motion.button>
+  );
+}
+
 export default function SuccessStoriesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
-  const paginationRef = useRef(null);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const total = successStories.length;
 
+  const slidePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const slideNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
+
+  const slideTo = useCallback((index: number) => {
+    swiperRef.current?.slideTo(index);
+  }, []);
+
+  const handleSlideChange = useCallback((swiper: SwiperType) => {
+    setActiveIndex(swiper.activeIndex);
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
+  }, []);
+
   return (
-    <section id="success-stories" className="w-full bg-[#F7F3EB] px-5 py-20 sm:px-8 md:py-24 lg:px-14 lg:py-28">
-      {/* ---------------------------------------------------------- */}
-      {/* Header                                                     */}
-      {/* ---------------------------------------------------------- */}
+    <section
+      id="success-stories"
+      className="w-full overflow-hidden bg-[#F7F3EB] px-5 py-20 sm:px-8 md:py-24 lg:px-14 lg:py-28"
+    >
+      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <motion.div
         initial="hidden"
         whileInView="show"
@@ -289,54 +378,43 @@ export default function SuccessStoriesSection() {
         </p>
       </motion.div>
 
-      {/* ---------------------------------------------------------- */}
-      {/* Carousel shell                                              */}
-      {/* ---------------------------------------------------------- */}
+      {/* â”€â”€ Carousel shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <motion.div
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.15 }}
         variants={fadeUp}
-        className="mx-auto w-full rounded-[2rem] border border-black/5 bg-white/60 p-6 shadow-[0_25px_60px_-30px_rgba(40,30,15,0.2)] backdrop-blur-sm sm:p-8 lg:p-10"
+        className="mx-auto w-full rounded-[2rem] border border-black/5 bg-white/60 p-5 shadow-[0_25px_60px_-30px_rgba(40,30,15,0.2)] backdrop-blur-sm sm:p-8 lg:p-10"
       >
-        {/* controls row */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1a1714] text-[#e8b873]">
-              <Home className="h-5 w-5" strokeWidth={1.75} />
+        {/* â”€â”€ Controls row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8">
+          {/* Title block */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1714] text-[#e8b873] sm:h-12 sm:w-12">
+              <Home className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.75} />
             </span>
             <div>
-              <p className="flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-yellow-600">
+              <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.2em] text-yellow-600 sm:text-xs">
                 10+ Successful Transactions
-                <span className="hidden h-px w-8 bg-champagne-gold/40 sm:inline-block" />
               </p>
-              <h3 className="mt-1 font-sans text-2xl 2xl:text-4xl text-[#1a1714] font-bold">
+              <h3 className="mt-0.5 font-sans text-lg font-bold text-[#1a1714] sm:text-2xl 2xl:text-4xl">
                 A Glimpse of Recent Wins
               </h3>
             </div>
           </div>
 
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2">
-              <button
-                ref={prevRef}
-                type="button"
-                aria-label="Previous listing"
-                disabled={isBeginning}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-[#1a1714] transition-all duration-300 hover:border-champagne-gold hover:text-champagne-gold disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-black/10 disabled:hover:text-[#1a1714]"
-              >
-                <ArrowLeft className="h-4 w-4" strokeWidth={2} />
-              </button>
-              <button
-                ref={nextRef}
-                type="button"
-                aria-label="Next listing"
-                disabled={isEnd}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1a1714] text-white transition-all duration-300 hover:bg-[#272019] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#1a1714]"
-              >
-                <ArrowRight className="h-4 w-4" strokeWidth={2} />
-              </button>
-            </div>
+          {/* Nav buttons + counter */}
+          <div className="flex items-center gap-3">
+            <NavArrow
+              direction="prev"
+              onClick={slidePrev}
+              disabled={isBeginning}
+            />
+            <NavArrow
+              direction="next"
+              onClick={slideNext}
+              disabled={isEnd}
+            />
             <p className="font-sans text-sm text-[#6f6a63]">
               <span className="text-base font-semibold text-champagne-gold">
                 {pad(activeIndex + 1)}
@@ -346,27 +424,15 @@ export default function SuccessStoriesSection() {
           </div>
         </div>
 
-        {/* carousel */}
+        {/* â”€â”€ Swiper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Swiper
-          modules={[
-            Navigation,
-            Mousewheel,
-            Keyboard,
-            FreeMode,
-            Pagination,
-            A11y,
-          ]}
-          onBeforeInit={(swiper) => {
-            swiper.params.navigation.prevEl = prevRef.current;
-            swiper.params.navigation.nextEl = nextRef.current;
-            swiper.params.pagination.el = paginationRef.current;
+          modules={[Navigation, Mousewheel, Keyboard, FreeMode, A11y]}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            setIsBeginning(swiper.isBeginning);
+            setIsEnd(swiper.isEnd);
           }}
-          navigation
-          pagination={{
-            clickable: true,
-            dynamicBullets: true,
-            dynamicMainBullets: 4,
-          }}
+          onSlideChange={handleSlideChange}
           keyboard={{ enabled: true }}
           mousewheel={{
             forceToAxis: true,
@@ -381,18 +447,10 @@ export default function SuccessStoriesSection() {
           }}
           grabCursor
           watchOverflow
-          spaceBetween={20}
-          slidesPerView={1.1}
-          onSwiper={(swiper) => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }}
-          onSlideChange={(swiper) => {
-            setActiveIndex(swiper.activeIndex);
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }}
+          spaceBetween={16}
+          slidesPerView={1.08}
           breakpoints={{
+            400: { slidesPerView: 1.2, spaceBetween: 16 },
             480: { slidesPerView: 1.35, spaceBetween: 20 },
             640: { slidesPerView: 1.8, spaceBetween: 24 },
             768: { slidesPerView: 2.3, spaceBetween: 24 },
@@ -413,23 +471,21 @@ export default function SuccessStoriesSection() {
           ))}
         </Swiper>
 
-        {/* pagination dots */}
-        <div
-          ref={paginationRef}
-          className="success-stories-pagination mt-8 flex items-center justify-center"
-          style={{
-            "--swiper-pagination-color": "#C08A4A",
-            "--swiper-pagination-bullet-inactive-color": "#D8CFBF",
-            "--swiper-pagination-bullet-inactive-opacity": "1",
-            "--swiper-pagination-bullet-size": "7px",
-            "--swiper-pagination-bullet-horizontal-gap": "5px",
-          }}
-        />
+        {/* â”€â”€ Custom pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <PaginationDots
+            total={total}
+            active={activeIndex}
+            onDotClick={slideTo}
+          />
+          {/* Mobile-only swipe hint */}
+          <p className="font-sans text-[11px] text-[#9e9790] sm:hidden">
+            Swipe to browse all listings
+          </p>
+        </div>
       </motion.div>
 
-      {/* ---------------------------------------------------------- */}
-      {/* Trust / CTA strip                                          */}
-      {/* ---------------------------------------------------------- */}
+      {/* â”€â”€ Trust / CTA strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <motion.div
         initial="hidden"
         whileInView="show"
@@ -478,7 +534,7 @@ export default function SuccessStoriesSection() {
           className="lg:shrink-0"
         >
           <Link
-            href="/success-stories" // TODO: point at the real success-stories route
+            href="/success-stories"
             className="group flex w-fit shrink-0 items-center gap-3 rounded-full bg-[#1a1714] py-2 pl-6 pr-2 font-sans text-sm font-medium text-white transition-colors hover:bg-[#272019]"
           >
             Get Free Consultation
@@ -491,3 +547,4 @@ export default function SuccessStoriesSection() {
     </section>
   );
 }
+

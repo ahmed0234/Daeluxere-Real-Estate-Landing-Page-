@@ -141,7 +141,7 @@ export default function FloatingCTA() {
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: 20, scale: 0.94, filter: "blur(4px)" }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 right-4 z-50 flex flex-col gap-2.5 sm:right-6 md:bottom-8 md:right-8"
+            className="fixed bottom-6 right-4 z-50 flex flex-col gap-2.5 sm:right-6 md:bottom-8 md:right-8 w-[calc(100%-2rem)] max-w-[315px] sm:w-[315px]"
             aria-label="Floating contact options"
           >
             {/* ── Glass card wrapper ── */}

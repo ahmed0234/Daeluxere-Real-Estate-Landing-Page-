@@ -155,7 +155,7 @@ const featureItem: Variants = {
 
 export default function ServicesSection() {
   return (
-    <section className="w-full bg-[#F6F2ED] px-5 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-16 xl:px-20 2xl:px-28">
+    <section className="w-full overflow-hidden bg-[#F6F2ED] px-5 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-16 xl:px-20 2xl:px-28">
       {/* ----------------------------- Header ----------------------------- */}
       <motion.div
         initial="hidden"

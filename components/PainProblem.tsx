@@ -79,7 +79,7 @@ const pillVariantReverse = {
 
 export default function PainPointsSection() {
   return (
-    <section className="w-full bg-[#F7F3EB] px-5 py-20 sm:px-8 md:py-24 lg:px-14 lg:py-28">
+    <section className="w-full overflow-hidden bg-[#F7F3EB] px-5 py-20 sm:px-8 md:py-24 lg:px-14 lg:py-28">
       {/* ---------------------------------------------------------- */}
       {/* Header                                                     */}
       {/* ---------------------------------------------------------- */}
