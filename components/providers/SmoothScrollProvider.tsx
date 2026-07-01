@@ -2,6 +2,7 @@
 
 import { ReactLenis } from "lenis/react";
 import type { ReactNode } from "react";
+import { ConsultationScrollProvider } from "@/components/providers/ConsultationScrollProvider";
 
 interface SmoothScrollProviderProps {
   children: ReactNode;
@@ -18,7 +19,7 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
         syncTouch: false,   // Keeps native kinetic touch scrolling on mobile devices for peak performance
       }}
     >
-      {children}
+      <ConsultationScrollProvider>{children}</ConsultationScrollProvider>
     </ReactLenis>
   );
 }

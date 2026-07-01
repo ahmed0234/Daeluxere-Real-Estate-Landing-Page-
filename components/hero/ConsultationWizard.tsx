@@ -15,7 +15,12 @@ import {
   RiMailLine,
   RiMessage2Line,
   RiSparklingLine,
+  RiUserLine,
+  RiLoader4Line,
 } from "react-icons/ri";
+import { submitContactLead } from "@/lib/contact/submit-lead";
+import { validateContactLead } from "@/lib/contact/validation";
+import type { ContactFieldErrors } from "@/lib/contact/types";
 
 /* ── Types ───────────────────────────────────────────────── */
 
@@ -26,9 +31,23 @@ type WizardData = {
   area: string;
   features: string[];
   budget: string;
+  name: string;
   phone: string;
   email: string;
   comments: string;
+};
+
+const INITIAL_WIZARD_DATA: WizardData = {
+  propertyType: "",
+  timeline: "",
+  bedrooms: "",
+  area: "",
+  features: [],
+  budget: "",
+  name: "",
+  phone: "",
+  email: "",
+  comments: "",
 };
 
 const TOTAL_STEPS = 7;
@@ -64,6 +83,41 @@ const FEATURES = [
 ];
 
 const BUDGETS = ["Under $300K", "$300K–$500K", "$500K–$700K", "$750K+"];
+
+function getPropertyTypeLabel(id: string): string {
+  return PROPERTY_TYPES.find((type) => type.id === id)?.label ?? id;
+}
+
+function buildLeadPayload(data: WizardData) {
+  return {
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    propertyType: getPropertyTypeLabel(data.propertyType),
+    timeline: data.timeline,
+    bedrooms: data.bedrooms,
+    area: data.area,
+    features: data.features,
+    budget: data.budget,
+    comments: data.comments,
+  };
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+
+  return (
+    <p className="mt-1.5 px-1 font-sans text-xs text-[#ffb4a2] sm:text-sm" role="alert">
+      {message}
+    </p>
+  );
+}
+
+function inputBorderClass(hasError: boolean) {
+  return hasError
+    ? "border-[#ffb4a2]/70 bg-[#ffb4a2]/10 focus-within:border-[#ffb4a2] focus-within:bg-[#ffb4a2]/15"
+    : "border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20";
+}
 
 /* ── Motion variants ─────────────────────────────────────── */
 
@@ -166,19 +220,23 @@ export default function ConsultationWizard() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [submitted, setSubmitted] = useState(false);
-  const [data, setData] = useState<WizardData>({
-    propertyType: "",
-    timeline: "",
-    bedrooms: "",
-    area: "",
-    features: [],
-    budget: "",
-    phone: "",
-    email: "",
-    comments: "",
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
+  const [data, setData] = useState<WizardData>(INITIAL_WIZARD_DATA);
 
   const progress = (step / TOTAL_STEPS) * 100;
+
+  function updateField<K extends keyof WizardData>(field: K, value: WizardData[K]) {
+    setData((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+    if (submitError) setSubmitError(null);
+  }
 
   function goNext() {
     setDirection(1);
@@ -190,28 +248,59 @@ export default function ConsultationWizard() {
     setStep((s) => Math.max(s - 1, 1));
   }
 
-  function pick(field: keyof WizardData, value: string) {
-    setData((d) => ({ ...d, [field]: value }));
+  function pick(field: Exclude<keyof WizardData, "features">, value: string) {
+    updateField(field, value);
     // Auto-advance for single-select steps
     setTimeout(() => goNext(), 280);
   }
 
   function toggleFeature(feature: string) {
-    setData((d) => ({
-      ...d,
-      features: d.features.includes(feature)
-        ? d.features.filter((f) => f !== feature)
-        : [...d.features, feature],
+    setData((current) => ({
+      ...current,
+      features: current.features.includes(feature)
+        ? current.features.filter((item) => item !== feature)
+        : [...current.features, feature],
     }));
+    if (submitError) setSubmitError(null);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (isSubmitting) return;
+
+    const payload = buildLeadPayload(data);
+    const validation = validateContactLead(payload);
+
+    if (!validation.valid) {
+      setFieldErrors(validation.errors);
+      setSubmitError(
+        validation.errors.form ??
+          "Please review the highlighted fields before submitting."
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setFieldErrors({});
+
+    const response = await submitContactLead(validation.payload!);
+
+    setIsSubmitting(false);
+
+    if (!response.success) {
+      setSubmitError(response.message);
+      if (response.errors) setFieldErrors(response.errors);
+      return;
+    }
+
     setSubmitted(true);
+    setData(INITIAL_WIZARD_DATA);
+    setStep(1);
+    setDirection(1);
   }
 
   return (
     <div
-      id="consultation"
       className="relative rounded-[28px] p-5 sm:p-7 lg:p-8 xl:p-9 w-full flex flex-col gap-0 select-none overflow-hidden"
       style={{
         /* Dark Charcoal Glass — deep background so white text is crisp and readable */
@@ -452,54 +541,111 @@ export default function ConsultationWizard() {
                         Enter your Details so we will contact you
                       </em>
                     </h3>
+
+                    {submitError && (
+                      <div
+                        role="alert"
+                        className="rounded-2xl border border-[#ffb4a2]/40 bg-[#ffb4a2]/10 px-4 py-3 font-sans text-sm text-[#ffd6cc]"
+                      >
+                        {submitError}
+                      </div>
+                    )}
+
                     <div className="flex flex-col gap-3 sm:gap-3.5">
-                      <label className="flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiPhoneLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
-                        <input
-                          type="tel"
-                          placeholder="Phone Number"
-                          value={data.phone}
-                          onChange={(e) =>
-                            setData((d) => ({ ...d, phone: e.target.value }))
-                          }
-                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
-                        />
-                      </label>
-                      <label className="flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiMailLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
-                        <input
-                          type="email"
-                          placeholder="Email Address"
-                          value={data.email}
-                          onChange={(e) =>
-                            setData((d) => ({ ...d, email: e.target.value }))
-                          }
-                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
-                        />
-                      </label>
-                      <label className="flex items-start gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border border-white/28 bg-white/14 focus-within:border-champagne-gold/60 focus-within:bg-white/20 transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]">
-                        <RiMessage2Line className="text-champagne-gold text-base sm:text-lg flex-shrink-0 mt-0.5" />
-                        <textarea
-                          placeholder="Any comments or questions..."
-                          value={data.comments}
-                          onChange={(e) =>
-                            setData((d) => ({ ...d, comments: e.target.value }))
-                          }
-                          rows={3}
-                          className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full resize-none font-medium"
-                        />
-                      </label>
+                      <div>
+                        <label
+                          className={`flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)] ${inputBorderClass(Boolean(fieldErrors.name))}`}
+                        >
+                          <RiUserLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
+                          <input
+                            type="text"
+                            name="name"
+                            autoComplete="name"
+                            placeholder="Full Name"
+                            value={data.name}
+                            onChange={(e) => updateField("name", e.target.value)}
+                            aria-invalid={Boolean(fieldErrors.name)}
+                            className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
+                          />
+                        </label>
+                        <FieldError message={fieldErrors.name} />
+                      </div>
+
+                      <div>
+                        <label
+                          className={`flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)] ${inputBorderClass(Boolean(fieldErrors.phone))}`}
+                        >
+                          <RiPhoneLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
+                          <input
+                            type="tel"
+                            name="phone"
+                            autoComplete="tel"
+                            inputMode="tel"
+                            placeholder="Phone Number"
+                            value={data.phone}
+                            onChange={(e) => updateField("phone", e.target.value)}
+                            aria-invalid={Boolean(fieldErrors.phone)}
+                            className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
+                          />
+                        </label>
+                        <FieldError message={fieldErrors.phone} />
+                      </div>
+
+                      <div>
+                        <label
+                          className={`flex items-center gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)] ${inputBorderClass(Boolean(fieldErrors.email))}`}
+                        >
+                          <RiMailLine className="text-champagne-gold text-base sm:text-lg flex-shrink-0" />
+                          <input
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            inputMode="email"
+                            placeholder="Email Address"
+                            value={data.email}
+                            onChange={(e) => updateField("email", e.target.value)}
+                            aria-invalid={Boolean(fieldErrors.email)}
+                            className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full font-medium"
+                          />
+                        </label>
+                        <FieldError message={fieldErrors.email} />
+                      </div>
+
+                      <div>
+                        <label
+                          className={`flex items-start gap-3 sm:gap-3.5 px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border transition-all duration-200 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.08)] ${inputBorderClass(Boolean(fieldErrors.comments))}`}
+                        >
+                          <RiMessage2Line className="text-champagne-gold text-base sm:text-lg flex-shrink-0 mt-0.5" />
+                          <textarea
+                            name="comments"
+                            placeholder="Any comments or questions... (optional)"
+                            value={data.comments}
+                            onChange={(e) => updateField("comments", e.target.value)}
+                            rows={3}
+                            aria-invalid={Boolean(fieldErrors.comments)}
+                            className="bg-transparent text-white text-sm sm:text-[0.9375rem] placeholder:text-white/60 outline-none w-full resize-none font-medium"
+                          />
+                        </label>
+                        <FieldError message={fieldErrors.comments} />
+                      </div>
                     </div>
+
                     <motion.button
+                      type="button"
                       onClick={handleSubmit}
-                      whileHover={{
-                        scale: 1.02,
-                        boxShadow:
-                          "0 10px 48px rgba(221,199,161,0.28), 0 0 0 1px rgba(221,199,161,0.45)",
-                        backgroundColor: "rgba(221,199,161,0.24)",
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                      className="relative mt-2 w-full py-4 sm:py-[1.125rem] rounded-2xl text-white text-sm sm:text-[0.9375rem] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 overflow-hidden"
+                      disabled={isSubmitting}
+                      whileHover={
+                        isSubmitting
+                          ? undefined
+                          : {
+                              scale: 1.02,
+                              boxShadow:
+                                "0 10px 48px rgba(221,199,161,0.28), 0 0 0 1px rgba(221,199,161,0.45)",
+                              backgroundColor: "rgba(221,199,161,0.24)",
+                            }
+                      }
+                      whileTap={isSubmitting ? undefined : { scale: 0.98 }}
+                      className="relative mt-2 w-full py-4 sm:py-[1.125rem] rounded-2xl text-white text-sm sm:text-[0.9375rem] font-bold tracking-[0.08em] uppercase transition-all duration-200 flex items-center justify-center gap-2 overflow-hidden disabled:cursor-not-allowed disabled:opacity-70"
                       style={{
                         background:
                           "linear-gradient(135deg, rgba(221, 199, 161, 0.22) 0%, rgba(221, 199, 161, 0.08) 100%)",
@@ -512,8 +658,17 @@ export default function ConsultationWizard() {
                     >
                       {/* Top shimmer */}
                       <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-champagne-gold/50 to-transparent" />
-                      Book My Free Consultation
-                      <RiArrowRightLine className="text-champagne-gold" />
+                      {isSubmitting ? (
+                        <>
+                          <RiLoader4Line className="animate-spin text-champagne-gold text-lg" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          Book My Free Consultation
+                          <RiArrowRightLine className="text-champagne-gold" />
+                        </>
+                      )}
                     </motion.button>
                     <p className="text-center text-white/50 text-xs sm:text-sm mt-1">
                       🔒 Your information is secure and confidential.

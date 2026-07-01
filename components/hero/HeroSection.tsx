@@ -14,6 +14,8 @@ import {
   RiStarFill,
 } from "react-icons/ri";
 import ConsultationWizard from "./ConsultationWizard";
+import ConsultationFormHighlight from "./ConsultationFormHighlight";
+import { useConsultationScroll } from "@/components/providers/ConsultationScrollProvider";
 
 /* ── Motion variants ─────────────────────────────────── */
 
@@ -119,6 +121,8 @@ function CountUp({
 /* ── Component ─────────────────────────────────────────── */
 
 export default function HeroSection() {
+  const { isHighlighted } = useConsultationScroll();
+
   return (
     /* ── Hero bento wrapper — side + bottom gutters only (top handled by Navbar) ── */
     <main className="flex-1 flex flex-col px-2 sm:px-4 pb-4 md:px-5 md:pb-5">
@@ -397,8 +401,10 @@ export default function HeroSection() {
                 ease: [0.22, 1, 0.36, 1],
                 delay: 0.3,
               }}
-              className="w-full z-10"
+              className={`relative w-full z-10${isHighlighted ? " consultation-highlight-active" : ""}`}
+              tabIndex={-1}
             >
+              <ConsultationFormHighlight active={isHighlighted} />
               <ConsultationWizard />
             </motion.div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { CONSULTATION_CTA_ATTR } from "@/lib/consultation";
 import {
   Tag,
   Clock,
@@ -300,6 +301,7 @@ export default function PainPointsSection() {
 
         <motion.button
           type="button"
+          {...{ [CONSULTATION_CTA_ATTR]: "" }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           className="group flex shrink-0 items-center gap-3 rounded-full bg-[#1a1714] py-2 pl-6 pr-2 font-sans text-sm font-medium text-white transition-colors hover:bg-[#272019]"

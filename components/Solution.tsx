@@ -395,7 +395,7 @@ export default function SolutionSection() {
 
             {/* CTA */}
             <motion.a
-              href="#contact"
+              href="#consultation"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               className="flex w-full items-center justify-center gap-4 rounded-full bg-gradient-to-r from-[#D6B583] to-[#B98C4E] py-2 pl-6 pr-2 font-sans text-[15px] font-medium text-[#1F1B16] shadow-[0_8px_24px_-8px_rgba(185,140,78,0.55)] transition-shadow duration-300 hover:shadow-[0_10px_30px_-6px_rgba(185,140,78,0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A573] sm:w-auto"

@@ -2,7 +2,6 @@
 
 import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "motion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -533,15 +532,15 @@ export default function SuccessStoriesSection() {
           whileTap={{ scale: 0.97 }}
           className="lg:shrink-0"
         >
-          <Link
-            href="/success-stories"
+          <a
+            href="#consultation"
             className="group flex w-fit shrink-0 items-center gap-3 rounded-full bg-[#1a1714] py-2 pl-6 pr-2 font-sans text-sm font-medium text-white transition-colors hover:bg-[#272019]"
           >
             Get Free Consultation
             <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white transition-colors group-hover:border-[#cd9a5b] group-hover:bg-[#cd9a5b] group-hover:text-[#1a1714]">
               <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
             </span>
-          </Link>
+          </a>
         </motion.div>
       </motion.div>
     </section>

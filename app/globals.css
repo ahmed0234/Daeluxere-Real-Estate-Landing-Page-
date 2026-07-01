@@ -67,6 +67,47 @@
   }
 }
 
+@keyframes consultation-arrive {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
+  }
+  35% {
+    transform: translateY(-5px) scale(1.012);
+    box-shadow:
+      0 48px 110px rgba(0, 0, 0, 0.58),
+      0 0 0 1px rgba(221, 199, 161, 0.28),
+      0 0 56px rgba(221, 199, 161, 0.2);
+  }
+  70% {
+    transform: translateY(-2px) scale(1.005);
+    box-shadow:
+      0 44px 105px rgba(0, 0, 0, 0.56),
+      0 0 0 1px rgba(221, 199, 161, 0.16),
+      0 0 32px rgba(221, 199, 161, 0.12);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.consultation-highlight-active {
+  animation: consultation-arrive 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  outline: 1.5px solid rgba(221, 199, 161, 0.48);
+  outline-offset: 5px;
+  border-radius: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consultation-highlight-active {
+    animation: none;
+    outline: 2px solid rgba(221, 199, 161, 0.65);
+    outline-offset: 3px;
+    transform: none;
+  }
+}
+
 @keyframes progress-fill {
   from {
     width: 0%;

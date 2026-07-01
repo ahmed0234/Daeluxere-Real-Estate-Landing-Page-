@@ -145,7 +145,7 @@ export default function TeamSection() {
               delivering exceptional results and unforgettable experiences.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-6">
-              <MagneticButton href="#">Get to know us</MagneticButton>
+              <MagneticButton href="#consultation">Get to know us</MagneticButton>
             </motion.div>
           </motion.div>
 
@@ -295,7 +295,7 @@ export default function TeamSection() {
                 estate journey.
               </p>
               <div className="mt-5">
-                <MagneticButton href="#">Work With Us</MagneticButton>
+                <MagneticButton href="#consultation">Work With Us</MagneticButton>
               </div>
             </div>
           </motion.div>
