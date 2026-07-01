@@ -14,7 +14,7 @@ export async function POST(request: Request) {
         success: false,
         message: "Invalid request body. Please try again.",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
         message: "Please correct the highlighted fields and try again.",
         errors: result.errors,
       },
-      { status: 422 }
+      { status: 422 },
     );
   }
 
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         message:
           "We couldn't submit your request right now. Please try again in a moment.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -49,11 +49,13 @@ export async function POST(request: Request) {
   try {
     const secretKey = process.env.LEADS_HUB_SECRET;
     if (!secretKey) {
-      console.warn("[contact] LEADS_HUB_SECRET environment variable is missing");
+      console.warn(
+        "[contact] LEADS_HUB_SECRET environment variable is missing",
+      );
     }
 
     const leadsHubResponse = await fetch(
-      "https://leads-hub.com/api/leads/submit",
+      "https://lead-hub-gamma-gilt.vercel.app/api/leads/submit",
       {
         method: "POST",
         headers: {
@@ -63,13 +65,13 @@ export async function POST(request: Request) {
           secretKey,
           FormDataJson: result.payload,
         }),
-      }
+      },
     );
 
     if (!leadsHubResponse.ok) {
       const errorText = await leadsHubResponse.text().catch(() => "");
       console.error(
-        `[contact] Leads Hub API submission failed with status: ${leadsHubResponse.status} ${leadsHubResponse.statusText}. Response: ${errorText}`
+        `[contact] Leads Hub API submission failed with status: ${leadsHubResponse.status} ${leadsHubResponse.statusText}. Response: ${errorText}`,
       );
     }
   } catch (error) {
